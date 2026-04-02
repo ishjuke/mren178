@@ -88,32 +88,40 @@ void setup() {
   // put your setup code here, to run once:
   
   Serial.begin(9600);
-  lcd.begin(LCD_WIDTH, LCD_HEIGHT);
+  //LCD.begin(LCD_WIDTH, LCD_HEIGHT);
 
-  elevator.currentState = IDLE
+  elevator.currentState = IDLE;
   elevator.currentFloor = 1;
 
+
+
   Serial.println("Elevator FSM initialized");
-  lcd.print("Elevator Ready for Requests");
+  //lcd.print("Elevator Ready");
 
 }
+  char inputCMD[10];
+  char direction[5];
 
 void loop() {
   // put your main code here, to run repeatedly:
-
-  if (Serial.available() > 0){
-    String inputCMD = Serial.readStringUntil('n\')l
-    
-    int floorNum = input.toInt();
-
-    int spaceIndex = input.indexOf(' ');
-    String direction = floorNum.substring(spaceIndex, sizeof())
-  }
-
-  intputCMD = Serial.readString();
   
-  int floorNum = intputCMD.toInt();
-  int spaceIndex = intputCMD.indexOf(' ');
-  direction = inputCMD.substring(0, spaceIndex);
+  if (Serial.available() > 0) {
+  String input = Serial.readStringUntil('\n'); // Read the whole line
+  
+  // input.toInt() scans the string and returns the first integer found
+  int val = input.toInt(); 
+  
+  // To get the word, you can remove the number or find a space
+  int spaceIndex = input.indexOf(' ');
+  String word = input.substring(spaceIndex, sizeof(input));
+
+  Serial.print("Word: "); Serial.println(word);
+  Serial.print("Number: "); Serial.println(val);
+  }
+  // intputCMD = Serial.readString();
+  
+  // int floorNum = intputCMD.toInt();
+  // int spaceIndex = intputCMD.indexOf(' ');
+  // direction = inputCMD.substring(0, spaceIndex);
 
 }
