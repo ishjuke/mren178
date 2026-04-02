@@ -51,6 +51,10 @@ void insertDownRequest(int floorNum){
   insertionSort(downQueue, upCount, DOWN);
 }
 
+/* 
+  Poping requests to move to 
+*/
+
 int popUpRequest(){
   if (upCount == 0) return -1;
   
@@ -81,6 +85,10 @@ int popDownRequest(){
 
 }
 
+/*
+  insertion sort for sorting queues in sequential order
+*/
+
 void insertionSort(int arr[], size_t n, Direction d) {
   for (int i = 1; i < n; i++) {
     int key = arr[i];
@@ -105,6 +113,9 @@ void insertionSort(int arr[], size_t n, Direction d) {
   }
 }
 
+/*
+  lcd animation for floors
+*/
 void moveToFloor(int target){
   if (target == -1 || target == elevator.currentFloor) return;
 
@@ -127,7 +138,10 @@ void moveToFloor(int target){
 }
 
 void setup() {
-  // put your setup code here, to run once:
+  
+  /*
+    LCD startup and initial elevator setup
+  */
   
   Serial.begin(9600);
   lcd.begin(LCD_WIDTH, LCD_HEIGHT);
@@ -150,8 +164,9 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  /*
+    Floor request parsing
+  */
   if (Serial.available() > 0){
     String inputCMD = Serial.readStringUntil('\n'); // reads the input string until \n is read
     inputCMD.trim(); // cuts the \r and \n from the string
@@ -189,6 +204,9 @@ void loop() {
     
   }
 
+  /*
+    UP and down queue switching logic
+  */
   int targetFloor = -1;
   // Pops all the requests in onen direction and switches direction once there are no requests
   if (elevator.currentDir == UP){
