@@ -104,15 +104,33 @@ void loop() {
   // put your main code here, to run repeatedly:
 
   if (Serial.available() > 0){
-    String inputCMD = Serial.readStringUntil('\n');
-    
-    int floorNum = inputCMD.toInt();
+    String inputCMD = Serial.readStringUntil('\n'); // reads the input string until \n is read
+    inputCMD.trim(); // cuts the \r and \n from the string
 
     int spaceIndex = inputCMD.indexOf(' ');
-    String direction = inputCMD.substring(spaceIndex, sizeof(inputCMD));
 
-    Serial.print("Word: "); Serial.println(direction);
-    Serial.print("Number: "); Serial.println(floorNum);
+    if (spaceIndex != -1){ // Ensures a space exist in the input
+      int floorNum = inputCMD.substring(0, spaceIndex).toInt(); // reads the left characters in the string and translates them into int
+
+      String direction = inputCMD.substring(spaceIndex + 1); // reads the right characters in the string 
+
+      Serial.print("Word: "); Serial.println(direction);
+      Serial.print("Number: "); Serial.println(floorNum); //abcd
+
+    // reads the inputted request and determines direction desired
+      if (direction.equalsIgnoreCase("Up")){
+        Serial.println("Place in up queue");
+      }
+
+      else if (direction.equalsIgnoreCase("Down")){
+        Serial.println("Place in down queue");
+      }
+
+      else {
+        Serial.println("Invalid request");
+      }
+    }
+    
   }
 
 }
