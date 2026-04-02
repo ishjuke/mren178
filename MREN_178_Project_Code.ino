@@ -39,21 +39,46 @@ void insertUpRequest(int floorNum){
   upCount++;
 }
 
-int InsertDownRequest(int floorNum){
+void insertDownRequest(int floorNum){
+  downQueue[downCount] = floorNum;
 
   downCount++;
 }
 
 int popUpRequest(){
-  if (upCount == 0) return;
+  if (upCount == 0) {
+    Elevator.currentDir = DOWN;
+    return -1;
+  }
+  
+  int nextFloor = upQueue[0]
+
+  for (int i = 0; i < upCount; i++){
+    upQueue[i] = upQueue[i + 1];
+  }
 
   upCount--;
+
+  return nextFloor;
+  
 }
 
 int popDownRequest(){
-  if (downCount == 0) return;
+  if (downCount == 0){
+    Elevator.CurrentDir = UP;
+    return -1;
+  }
+
+  int nextFloor = upQueue[0];
+
+  for (int i = 0; i < downCount; i++){
+    upQueue[i] = downQueue[i + 1];
+  }
 
   downCount--;
+
+  return nextFloor;
+
 }
 
 void insertionSort(int arr[], size_t n, Direction d) {
@@ -115,22 +140,35 @@ void loop() {
       String direction = inputCMD.substring(spaceIndex + 1); // reads the right characters in the string 
 
       Serial.print("Word: "); Serial.println(direction);
-      Serial.print("Number: "); Serial.println(floorNum); //abcd
+      Serial.print("Number: "); Serial.println(floorNum); 
 
     // reads the inputted request and determines direction desired
       if (direction.equalsIgnoreCase("Up")){
         Serial.println("Place in up queue");
+
+        insertUpRequest(floorNum);
       }
 
       else if (direction.equalsIgnoreCase("Down")){
         Serial.println("Place in down queue");
+
+        insertDownRequest(floorNum);
       }
 
       else {
         Serial.println("Invalid request");
       }
+
     }
     
+  }
+
+  int floorDestination = popUpRequest();
+  for (i = Elevator.currentFloor; Elevator.currentFloor < floorDestination; i++){
+    lcd.setCursor(i, 0);
+    lcd.write(255);
+    _delay_ms(5000);
+    lcd.clear();
   }
 
 }
