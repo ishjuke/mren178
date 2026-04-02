@@ -47,11 +47,11 @@ void insertDownRequest(int floorNum){
 
 int popUpRequest(){
   if (upCount == 0) {
-    Elevator.currentDir = DOWN;
+   // Elevator.currentDir = Elevator.currentDir.DOWN;
     return -1;
   }
   
-  int nextFloor = upQueue[0]
+  int nextFloor = upQueue[0];
 
   for (int i = 0; i < upCount; i++){
     upQueue[i] = upQueue[i + 1];
@@ -60,12 +60,12 @@ int popUpRequest(){
   upCount--;
 
   return nextFloor;
-  
+
 }
 
 int popDownRequest(){
   if (downCount == 0){
-    Elevator.CurrentDir = UP;
+    //Elevator.CurrentDir = Elevator.currentDir.UP;
     return -1;
   }
 
@@ -163,11 +163,12 @@ void loop() {
     
   }
 
-  int floorDestination = popUpRequest();
-  for (i = Elevator.currentFloor; Elevator.currentFloor < floorDestination; i++){
+  int targetFloor = popUpRequest();
+
+  for (int i = elevator.currentFloor; i <= targetFloor; i++){
     lcd.setCursor(i, 0);
     lcd.write(255);
-    _delay_ms(5000);
+    _delay_ms(1000);
     lcd.clear();
   }
 
