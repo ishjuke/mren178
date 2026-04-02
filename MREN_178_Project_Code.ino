@@ -82,32 +82,26 @@ int popDownRequest(){
 }
 
 void insertionSort(int arr[], size_t n, Direction d) {
-  if(d == UP){
-    for (size_t i = 1; i < n; i++) { //going up 
-      int key = arr[i]; // The element to be inserted
-      int j = i - 1; 
+  for (int i = 1; i < n; i++) {
+    int key = arr[i];
+    int j = i - 1;
 
-      // Move elements of arr[0...i-1], that are greater than key, 
-      // to one position ahead of their current position
+    if (d == UP) {
+      // Ascending Order (e.g., 2, 4, 5)
       while (j >= 0 && arr[j] > key) {
         arr[j + 1] = arr[j];
         j--;
       }
-      arr[j + 1] = key; // Insert the key in its correct position
-    }
-  }
-  if (d == DOWN){ // going down
-    for (size_t i = n-1; i > 0; i--){
-      int key = arr[i]; 
-      int j = i + 1; 
-
-      while(j <= n && arr[j] > key ) {
-        arr[j - 1] = arr [j]; 
-        j++; 
-
+    } 
+    
+    else {
+      // Descending Order 
+      while (j >= 0 && arr[j] < key) {
+        arr[j + 1] = arr[j];
+        j--;
       }
-      arr[j-1] = key; 
     }
+    arr[j + 1] = key;
   }
 }
 
