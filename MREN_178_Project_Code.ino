@@ -34,22 +34,25 @@ int downQueue[ELEVATORSIZE];
 int downCount = 0; 
 
 void insertUpRequest(int floorNum){
+  if (upCount >= ELEVATORSIZE) return; // prevent array overflow
   upQueue[upCount] = floorNum;
 
   upCount++;
+
+  insertionSort(upQueue, upCount, UP)
 }
 
 void insertDownRequest(int floorNum){
+  if (downCount >= ELEVATORSIZE) return; // prevent array overflow
   downQueue[downCount] = floorNum;
 
   downCount++;
+
+  insertionSort(downQueue, upCount, DOWN);
 }
 
 int popUpRequest(){
-  if (upCount == 0) {
-   // Elevator.currentDir = Elevator.currentDir.DOWN;
-    return -1;
-  }
+  if (upCount == 0) return -1;
   
   int nextFloor = upQueue[0];
 
@@ -59,25 +62,22 @@ int popUpRequest(){
 
   upCount--;
 
-  return nextFloor;
+  return nextFloor - 1;
 
 }
 
 int popDownRequest(){
-  if (downCount == 0){
-    //Elevator.CurrentDir = Elevator.currentDir.UP;
-    return -1;
-  }
+  if (downCount == 0) return -1;
 
   int nextFloor = upQueue[0];
 
   for (int i = 0; i < downCount; i++){
-    upQueue[i] = downQueue[i + 1];
+    downQueue[i] = downQueue[i + 1];
   }
 
   downCount--;
 
-  return nextFloor;
+  return nextFloor - 1;
 
 }
 
@@ -111,6 +111,20 @@ void insertionSort(int arr[], size_t n, Direction d) {
   }
 }
 
+void moveToFloor(int target){
+  if (target == -1) return;
+
+  int step = (target>elevator.currentFloor) ? 1: -1;
+
+  while (target != elevator.currentFloor){
+    lcd.clear();
+    elevator.currentFloor += step;
+    lcd.setCursor(elevator.currentFloor, 0);
+    lcd.write(255);
+    _delay_ms(1000);
+  }
+}
+
 void setup() {
   // put your setup code here, to run once:
   
@@ -118,9 +132,10 @@ void setup() {
   lcd.begin(LCD_WIDTH, LCD_HEIGHT);
 
   elevator.currentState = IDLE;
-  elevator.currentFloor = 1;
+  elevator.currentFloor = 0;
 
   Serial.println("Elevator FSM initialized");
+  lcd.setCursor(0,1);
   lcd.print("Elevator Ready");
 
 }
@@ -163,13 +178,30 @@ void loop() {
     
   }
 
-  int targetFloor = popUpRequest();
+  int targetFloor = -1;
 
-  for (int i = elevator.currentFloor; i <= targetFloor; i++){
-    lcd.setCursor(i, 0);
-    lcd.write(255);
-    _delay_ms(1000);
-    lcd.clear();
+  if (elevator.currentDir == UP){
+    if (upCount > 0){
+      targetFloor = popUpRequest();
+      moveToFloor(targetFloor);
+    }
+
+    else if (downCount > 0){
+      elevator.currentDir = DOWN;
+      Serial.println("Switching to down queue");
+    }
+  }
+
+  else if (elevator.currentDir == DOWN){
+    if (downCount > 0){
+      targetFloor = popDownRequest();
+      moveToFloor(targetFloor);
+    }
+
+    else if (upCount > 0){
+      elevator.currentDir = UP;
+      Serial.println("Switching to up queue");
+    }
   }
 
 }
