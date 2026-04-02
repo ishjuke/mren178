@@ -102,18 +102,12 @@ void loop() {
   // put your main code here, to run repeatedly:
 
   if (Serial.available() > 0){
-    String inputCMD = Serial.readStringUntil('n\')l
+    String inputCMD = Serial.readStringUntil('n\');
     
     int floorNum = input.toInt();
 
     int spaceIndex = input.indexOf(' ');
-    String direction = floorNum.substring(spaceIndex, sizeof())
+    String direction = floorNum.substring(spaceIndex, sizeof());
   }
-
-  intputCMD = Serial.readString();
-  
-  int floorNum = intputCMD.toInt();
-  int spaceIndex = intputCMD.indexOf(' ');
-  direction = inputCMD.substring(0, spaceIndex);
 
 }
