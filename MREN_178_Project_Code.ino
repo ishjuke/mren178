@@ -16,7 +16,7 @@
 #define ELEVATORSIZE 10
 
 enum FSMState = {IDLE, MOVING_UP, MOVING_DOWN, DOOR_OPEN, DOOR_CLOSE, EMERGENCY_STOP};
-enum Direction {Down = 0, UP = 1};
+enum Direction {DOWN = 0, UP = 1};
 
 struct Elevator {
   FSMState currentState;
@@ -34,9 +34,6 @@ int downCount = 0;
 void insertUpRequest(int floorNum){
   upQueue[upCount] = floorNum;
 
-  for (int i = 0; i < ELEVATORSIZE; i++){
-    if 
-  }
   upCount++;
 }
 
@@ -57,18 +54,33 @@ int popDownRequest(){
   downCount--;
 }
 
-void insertionSort(int arr[], size_t n) {
-  for (size_t i = 1; i < n; i++) {
-    int key = arr[i]; // The element to be inserted
-    int j = i - 1;
+void insertionSort(int arr[], size_t n, Direction d) {
+  if(d == UP){
+    for (size_t i = 1; i < n; i++) { //going up 
+      int key = arr[i]; // The element to be inserted
+      int j = i - 1; 
 
-    // Move elements of arr[0...i-1], that are greater than key, 
-    // to one position ahead of their current position
-    while (j >= 0 && arr[j] > key) {
-      arr[j + 1] = arr[j];
-      j--;
+      // Move elements of arr[0...i-1], that are greater than key, 
+      // to one position ahead of their current position
+      while (j >= 0 && arr[j] > key) {
+        arr[j + 1] = arr[j];
+        j--;
+      }
+      arr[j + 1] = key; // Insert the key in its correct position
     }
-    arr[j + 1] = key; // Insert the key in its correct position
+  }
+  if (d == DOWN){ // going down
+    for (size_t i = n-1; i > 0; i--){
+      int key = arr[i]; 
+      int j = i + 1; 
+
+      while(j <= n && arr[j] > key ) {
+        arr[j - 1] = arr [j]; 
+        j++; 
+
+      }
+      arr[j-1] = key; 
+    }
   }
 }
 
@@ -81,6 +93,9 @@ void setup() {
   elevator.currentState = IDLE
   elevator.currentFloor = 1;
 
+  char inputCMD[10];
+  char direction[5];
+
   Serial.println("Elevator FSM initialized");
   lcd.print("Elevator Ready for Requests");
 
@@ -89,6 +104,10 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-
+  intputCMD = Serial.readString();
+  
+  int floorNum = intputCMD.toInt();
+  int spaceIndex = intputCMD.indexOf(' ');
+  direction = inputCMD.substring(0, spaceIndex);
 
 }
