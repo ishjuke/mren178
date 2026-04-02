@@ -15,6 +15,8 @@
 #define BUTTONPIN   A0
 #define ELEVATORSIZE 10
 
+LiquidCrystal lcd(PINRS, PINEN, PIND4, PIND5, PIND6, PIND7);
+
 enum FSMState {IDLE, MOVING_UP, MOVING_DOWN, DOOR_OPEN, DOOR_CLOSE, EMERGENCY_STOP};
 enum Direction {DOWN = 0, UP = 1};
 
@@ -90,11 +92,11 @@ void setup() {
   Serial.begin(9600);
   lcd.begin(LCD_WIDTH, LCD_HEIGHT);
 
-  elevator.currentState = IDLE
+  elevator.currentState = IDLE;
   elevator.currentFloor = 1;
 
   Serial.println("Elevator FSM initialized");
-  lcd.print("Elevator Ready for Requests");
+  lcd.print("Elevator Ready");
 
 }
 
@@ -102,12 +104,15 @@ void loop() {
   // put your main code here, to run repeatedly:
 
   if (Serial.available() > 0){
-    String inputCMD = Serial.readStringUntil('n\');
+    String inputCMD = Serial.readStringUntil('\n');
     
-    int floorNum = input.toInt();
+    int floorNum = inputCMD.toInt();
 
-    int spaceIndex = input.indexOf(' ');
-    String direction = floorNum.substring(spaceIndex, sizeof());
+    int spaceIndex = inputCMD.indexOf(' ');
+    String direction = inputCMD.substring(spaceIndex, sizeof(inputCMD));
+
+    Serial.print("Word: "); Serial.println(direction);
+    Serial.print("Number: "); Serial.println(floorNum);
   }
 
 }
