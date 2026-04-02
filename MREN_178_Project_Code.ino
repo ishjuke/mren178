@@ -39,7 +39,7 @@ void insertUpRequest(int floorNum){
 
   upCount++;
 
-  insertionSort(upQueue, upCount, UP)
+  insertionSort(upQueue, upCount, UP);
 }
 
 void insertDownRequest(int floorNum){
@@ -106,15 +106,22 @@ void insertionSort(int arr[], size_t n, Direction d) {
 }
 
 void moveToFloor(int target){
-  if (target == -1) return;
+  if (target == -1 || target == elevator.currentFloor) return;
 
   int step = (target>elevator.currentFloor) ? 1: -1;
+
+  lcd.setCursor(0, 1);
+  lcd.print("Moving to Floor: " + target);
 
   while (target != elevator.currentFloor){
     lcd.clear();
     elevator.currentFloor += step;
     lcd.setCursor(elevator.currentFloor, 0);
     lcd.write(255);
+    for (int i = elevator.currentFloor + 1; i < 16; i++){
+      lcd.setCursor(i, 0);
+      lcd.print("-");
+    }
     _delay_ms(1000);
   }
 }
@@ -126,7 +133,15 @@ void setup() {
   lcd.begin(LCD_WIDTH, LCD_HEIGHT);
 
   elevator.currentState = IDLE;
+  elevator.currentDir = UP;
   elevator.currentFloor = 0;
+
+  lcd.setCursor(0, 0);
+  lcd.write(255);
+  for (int i = 1; i < 16; i++){
+    lcd.setCursor(i, 0);
+    lcd.print("-");
+  }
 
   Serial.println("Elevator FSM initialized");
   lcd.setCursor(0,1);
@@ -147,6 +162,8 @@ void loop() {
       int floorNum = inputCMD.substring(0, spaceIndex).toInt(); // reads the left characters in the string and translates them into int
 
       String direction = inputCMD.substring(spaceIndex + 1); // reads the right characters in the string 
+
+      if (floorNum < 1 || floorNum > 16) Serial.println("Invalid Floor");
 
       Serial.print("Word: "); Serial.println(direction);
       Serial.print("Number: "); Serial.println(floorNum); 
@@ -173,7 +190,7 @@ void loop() {
   }
 
   int targetFloor = -1;
-
+  // Pops all the requests in onen direction and switches direction once there are no requests
   if (elevator.currentDir == UP){
     if (upCount > 0){
       targetFloor = popUpRequest();
