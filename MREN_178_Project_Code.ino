@@ -35,20 +35,28 @@ int downCount = 0;
 
 void insertUpRequest(int floorNum){
   if (upCount >= ELEVATORSIZE) return; // prevent array overflow
-  upQueue[upCount] = floorNum;
 
+  for (int i = 0; i < upCount; i++){
+    if (upQueue[i] == floorNum) return;
+  }
+
+  upQueue[upCount] = floorNum
   upCount++;
-
+  
   insertionSort(upQueue, upCount, UP);
 }
 
 void insertDownRequest(int floorNum){
   if (downCount >= ELEVATORSIZE) return; // prevent array overflow
-  downQueue[downCount] = floorNum;
 
+  for (int i = 0; i < downCount; i++){
+    if (downQueue[i] == floorNum) return;
+  }
+
+  downQueue[downCount] = floorNum;
   downCount++;
 
-  insertionSort(downQueue, upCount, DOWN);
+  insertionSort(downQueue, downCount, DOWN);
 }
 
 /* 
@@ -174,26 +182,37 @@ void loop() {
     int spaceIndex = inputCMD.indexOf(' ');
 
     if (spaceIndex != -1){ // Ensures a space exist in the input
-      int floorNum = inputCMD.substring(0, spaceIndex).toInt(); // reads the left characters in the string and translates them into int
+      int floorNum = inputCMD.substring(spaceIndex + 1).toInt(); // reads the left characters in the string and translates them into int
 
-      String direction = inputCMD.substring(spaceIndex + 1); // reads the right characters in the string 
+      String command = inputCMD.substring(0, spaceIndex); // reads the right characters in the string 
 
       if (floorNum < 1 || floorNum > 16) Serial.println("Invalid Floor");
 
-      Serial.print("Word: "); Serial.println(direction);
+      Serial.print("Word: "); Serial.println(command);
       Serial.print("Number: "); Serial.println(floorNum); 
 
     // reads the inputted request and determines direction desired
-      if (direction.equalsIgnoreCase("Up")){
+      if (command.equalsIgnoreCase("Up")){
         Serial.println("Place in up queue");
 
         insertUpRequest(floorNum);
       }
 
-      else if (direction.equalsIgnoreCase("Down")){
+      else if (command.equalsIgnoreCase("Down")){
         Serial.println("Place in down queue");
 
         insertDownRequest(floorNum);
+      }
+      // reads the inputted request and determines which queue the desired floor should be placed in
+      else if (command.equalsIgnoreCase("Floor")){
+        if (elevator.currentFloor < floorNum){
+          insertUpRequest(floorNum);
+        }
+
+        else {
+          insertDownRequest(floorNum);
+        }
+
       }
 
       else {
@@ -210,6 +229,7 @@ void loop() {
   int targetFloor = -1;
   // Pops all the requests in onen direction and switches direction once there are no requests
   if (elevator.currentDir == UP){
+    elevator.currentState = MOVING_UP;
     if (upCount > 0){
       targetFloor = popUpRequest();
       moveToFloor(targetFloor);
@@ -222,6 +242,7 @@ void loop() {
   }
 
   else if (elevator.currentDir == DOWN){
+    elevator.currentState = MOVING_DOWN;
     if (downCount > 0){
       targetFloor = popDownRequest();
       moveToFloor(targetFloor);
